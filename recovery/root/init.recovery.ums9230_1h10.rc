@@ -1,6 +1,65 @@
 #add for board init.rc for recovery mode
-import /init.recovery.common.rc
-
 on boot
     start boot-hal-1-2
     start health-hal-2-1
+
+on init
+    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw:/system/lib64/hw
+    setprop crypto.ready 1
+    
+ on fs
+    install_keyring
+
+on early-fs
+    start vold
+
+service vendor.gatekeeper.trusty /system/bin/hw/android.hardware.gatekeeper@1.0-service.trusty
+    class hal
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service vendor.keymint.unisoc /system/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
+    user root
+    group root drmrpc
+    disabled
+    oneshot
+    seclabel u:r:recovery:s0
+    
+ service vendor.sprd.trusty /system/bin/hw/vendor.sprd.hardware.trusty-service
+    user root
+    group root drmrpc
+    disabled
+    oneshot
+    seclabel u:r:recovery:s0
+    
+on property:crypto.ready=1
+    start vendor.gatekeeper.trusty
+    start vendor.keymint.unisoc
+    start vendor.sprd.trusty
+
+on property:hwservicemanager.ready=true
+    start vendor.gatekeeper.trusty
+    start vendor.keymint.unisoc
+    start vendor.sprd.trusty
+
+on property:ro.crypto.state=unsupported
+    stop vendor.gatekeeper.trusty
+    stop vendor.keymint.unisoc
+    stop vendor.sprd.trusty
+
+on property:ro.crypto.state=unencrypted
+    stop vendor.gatekeeper.trusty
+    stop vendor.keymint.unisoc
+    stop vendor.sprd.trusty
+
+on property:twrp.decrypt.done=true
+    stop vendor.gatekeeper.trusty
+    stop vendor.keymint.unisoc
+    stop vendor.sprd.trusty
+
+on property:crypto.ready=0
+    stop vendor.gatekeeper.trusty
+    stop vendor.keymint.unisoc
+    stop vendor.sprd.trusty

@@ -1,6 +1,7 @@
 #
 ## Please include it in /init.recovery.${ro.hardware}.rc
 #
+import /init.recovery.ums9230_1h10.rc
 
 service healthd /system/bin/healthd -r
     critical
