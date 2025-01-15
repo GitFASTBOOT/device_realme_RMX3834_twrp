@@ -1,0 +1,1 @@
+sys.usb.controller=musb-hdrc.1.auto
