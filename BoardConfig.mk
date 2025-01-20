@@ -141,6 +141,7 @@ TW_INCLUDE_REPACKTOOLS := true
 TW_HAS_NO_RECOVERY_PARTITION := true
 TW_EXCLUDE_APEX := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_CUSTOM_CPU_TEMP_PATH := sys/devices/virtual/thermal/thermal_zone0/temp
 
 #Brightness
 TW_DEFAULT_BRIGHTNESS := 1400
